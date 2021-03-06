@@ -1,6 +1,7 @@
 {
-  "name": "cra",
-  "version": "0.1.0",
+  "name": "@papercups-io/chat-builder-tailwind-example",
+  "homepage": "./",
+  "version": "0.0.0",
   "private": true,
   "dependencies": {
     "@craco/craco": "^5.8.0",

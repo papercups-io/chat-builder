@@ -1,6 +1,6 @@
 {
   "name": "@papercups-io/chat-builder-ant-example",
-  "homepage": ".",
+  "homepage": "./",
   "version": "0.0.0",
   "private": true,
   "scripts": {

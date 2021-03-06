@@ -17,15 +17,10 @@ const config = {
   agentAvailableText: 'Agents are online!',
   agentUnavailableText: 'Agents are not available at the moment.',
   customer: {
-    name: 'Test User',
-    email: 'test@test.com',
-    external_id: '123',
+    name: 'Demo User',
     // Ad hoc metadata
     metadata: {
-      plan: 'starter',
-      registered_at: '2020-09-01',
-      age: 25,
-      valid: true,
+      page: 'github',
     },
   },
   // NB: we override these values during development -- note that the

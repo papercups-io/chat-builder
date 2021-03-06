@@ -20,8 +20,8 @@
     "test:lint": "eslint src/**/*.ts*",
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
-    "predeploy": "cd sandbox && npm install && npm run build",
-    "deploy": "gh-pages -d sandbox/build"
+    "predeploy": "cd examples/tailwind && npm install && npm run build",
+    "deploy": "gh-pages -d examples/tailwind/build"
   },
   "peerDependencies": {
     "react": "^16.0.0"
