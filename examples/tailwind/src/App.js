@@ -3,7 +3,7 @@ import {ChatBuilder} from '@papercups-io/chat-builder';
 import Body from './Body';
 
 // NB: during development, replace this with a valid account ID from your dev db
-const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
+const TEST_ACCOUNT_ID = 'eb504736-0f20-4978-98ff-1a82ae60b266';
 
 const config = {
   title: 'Welcome to Papercups!',
@@ -29,8 +29,8 @@ const config = {
     },
   },
   // NB: we override these values during development -- note that the
-  // API runs on port 4000 by default, and the iframe on 8080
-  baseUrl: 'http://localhost:4000',
+  // baseUrl: 'http://localhost:4000',
+  baseUrl: 'https://alex-papercups-staging.herokuapp.com',
   requireEmailUpfront: true,
   showAgentAvailability: true,
   hideToggleButton: false,

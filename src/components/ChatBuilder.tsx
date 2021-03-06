@@ -1051,9 +1051,6 @@ class ChatBuilder extends React.Component<Props, State> {
       shouldDisplayBranding,
     } = this.state;
 
-    // FIXME: make sure these values work as expected!
-    console.log({isOpen, shouldDisplayNotifications});
-
     // TODO: set up a React context for this?
     if (children) {
       return children({

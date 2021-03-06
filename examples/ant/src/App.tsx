@@ -8,8 +8,7 @@ import {
 } from '@papercups-io/chat-builder';
 
 // NB: during development, replace this with a valid account ID from your dev db
-// const TEST_ACCOUNT_ID = 'eb504736-0f20-4978-98ff-1a82ae60b266';
-const TEST_ACCOUNT_ID = '2ebbad4c-b162-4ed2-aff5-eaf9ebf469a5';
+const TEST_ACCOUNT_ID = 'eb504736-0f20-4978-98ff-1a82ae60b266';
 
 const config = {
   title: 'Welcome to Papercups!',
@@ -35,28 +34,13 @@ const config = {
     },
   },
   // NB: we override these values during development -- note that the
-  // API runs on port 4000 by default, and the iframe on 8080
-  baseUrl: 'http://localhost:4000',
-  // iframeUrlOverride='http://localhost:8080'
+  // baseUrl: 'http://localhost:4000',
+  baseUrl: 'https://alex-papercups-staging.herokuapp.com',
   requireEmailUpfront: true,
   showAgentAvailability: true,
   hideToggleButton: false,
   defaultIsOpen: false,
   iconVariant: 'filled',
-  onChatLoaded: () => console.log('Chat loaded!'),
-  onChatClosed: () => console.log('Chat closed!'),
-  onChatOpened: () => console.log('Chat opened!'),
-  onMessageReceived: (message: any) =>
-    console.log('Message received!', message),
-  onMessageSent: (message: any) => console.log('Message sent!', message),
-  setDefaultGreeting: (settings: any) => {
-    const shouldDisplayAwayMessage =
-      settings?.account?.is_outside_working_hours || false;
-
-    return shouldDisplayAwayMessage
-      ? "We're away at the moment, but we'll be back on Monday!"
-      : 'Hi there! How can I help you?';
-  },
 };
 
 const App = () => {
