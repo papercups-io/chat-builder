@@ -50,12 +50,13 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
 
   return (
     <div
+      className='flex flex-col'
       style={{
-        height: 600,
-        maxWidth: 480,
+        height: 640,
+        width: 480,
       }}
     >
-      <div className='flex flex-col border rounded-xl h-full mb-6'>
+      <div className='flex flex-col border rounded-xl flex-1 mb-6 dark:bg-gray-800'>
         <div
           className='pt-4 px-4 mb-4'
           style={{
@@ -71,7 +72,7 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
           <div className='p-2 rounded-xl shadow-md border'>
             <form onSubmit={handleSubmit}>
               <input
-                className='bg-transparent outline-none box-border w-full p-2'
+                className='bg-transparent outline-none box-border w-full p-2 dark:text-white'
                 value={message}
                 placeholder='Start typing...'
                 onChange={handleChangeMessage}
@@ -94,8 +95,14 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
 };
 
 const App = () => {
+  const [isDarkMode, setDarkMode] = React.useState(false);
+
+  const handleToggleMode = (e) => {
+    setDarkMode(e.target.checked);
+  };
+
   return (
-    <div className='p-6'>
+    <div className={`${isDarkMode ? 'dark' : 'light'} p-6`}>
       <ChatBuilder
         config={config}
         version={'v2.0.0'}
@@ -127,6 +134,18 @@ const App = () => {
           );
         }}
       </ChatBuilder>
+
+      <div className='mt-10'>
+        <label className='inline-flex items-center mt-3'>
+          <input
+            type='checkbox'
+            className='h-5 w-5'
+            checked={isDarkMode}
+            onChange={handleToggleMode}
+          />
+          <span className='ml-2 text-gray-700'>Dark mode</span>
+        </label>
+      </div>
     </div>
   );
 };

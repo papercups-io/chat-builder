@@ -37,7 +37,7 @@ const AgentMessage = ({message}) => {
       )}
       <div
         style={{maxWidth: '80%'}}
-        className={`rounded py-2 px-3 bg-gray-100`}
+        className={`rounded py-2 px-3 bg-gray-100 dark:bg-gray-700 dark:text-white`}
       >
         {message.body}
       </div>

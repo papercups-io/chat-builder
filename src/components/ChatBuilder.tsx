@@ -744,7 +744,7 @@ class ChatBuilder extends React.Component<Props, State> {
       this.joinConversationChannel(conversationId, customerId);
 
       await this.updateExistingCustomer(customerId, metadata);
-      console.log('?', formattedMessages);
+
       const unseenMessages = formattedMessages.filter(
         (msg: Message) => !msg.seen_at && !!msg.user_id
       );
