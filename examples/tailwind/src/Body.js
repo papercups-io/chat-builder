@@ -3,7 +3,10 @@ import React from 'react';
 const CustomerMessage = ({message}) => {
   return (
     <div className={`flex my-2 justify-end`}>
-      <div className={`rounded py-2 px-3 text-white bg-blue-500`}>
+      <div
+        style={{maxWidth: '80%'}}
+        className={`rounded py-2 px-3 text-white bg-blue-500`}
+      >
         {message.body}
       </div>
     </div>
@@ -17,7 +20,7 @@ const AgentMessage = ({message}) => {
   const photoUrl = profile_photo_url || null;
 
   return (
-    <div className={`flex my-2 justify-start items-center`}>
+    <div className={`flex my-2 justify-start items-center `}>
       {photoUrl && photoUrl.length ? (
         <div
           className='flex w-8 h-8 justify-center items-center mr-2 rounded-full'
@@ -32,7 +35,12 @@ const AgentMessage = ({message}) => {
           {name.slice(0, 1).toUpperCase()}
         </div>
       )}
-      <div className={`rounded py-2 px-3 bg-gray-100`}>{message.body}</div>
+      <div
+        style={{maxWidth: '80%'}}
+        className={`rounded py-2 px-3 bg-gray-100`}
+      >
+        {message.body}
+      </div>
     </div>
   );
 };

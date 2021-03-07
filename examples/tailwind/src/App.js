@@ -53,7 +53,6 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
       style={{
         height: 600,
         maxWidth: 480,
-        margin: 16,
       }}
     >
       <div className='flex flex-col border rounded-xl h-full mb-6'>
@@ -72,14 +71,7 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
           <div className='p-2 rounded-xl shadow-md border'>
             <form onSubmit={handleSubmit}>
               <input
-                style={{
-                  border: 'none',
-                  boxSizing: 'border-box',
-                  width: '100%',
-                  padding: 8,
-                  outline: 0,
-                  fontSize: '1em',
-                }}
+                className='bg-transparent outline-none box-border w-full p-2'
                 value={message}
                 placeholder='Start typing...'
                 onChange={handleChangeMessage}
@@ -103,7 +95,7 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
 
 const App = () => {
   return (
-    <div>
+    <div className='p-6'>
       <ChatBuilder
         config={config}
         version={'v2.0.0'}
