@@ -164,7 +164,6 @@ const App = () => {
     <div className={`${isDarkMode ? 'dark' : 'light'} p-6`}>
       <ChatBuilder
         config={config}
-        version={'v2.0.0'}
         onChatLoaded={() => console.log('Chat loaded!')}
         onChatClosed={() => console.log('Chat closed!')}
         onChatOpened={() => console.log('Chat opened!')}
