@@ -1,21 +1,13 @@
 import React from 'react';
 import {ChatBuilder} from '@papercups-io/chat-builder';
-import Body from './Body';
 
 // NB: during development, replace this with a valid account ID from your dev db
 const TEST_ACCOUNT_ID = 'eb504736-0f20-4978-98ff-1a82ae60b266';
 
 const config = {
-  title: 'Welcome to Papercups!',
-  subtitle: 'Ask us anything in the chat window 😊',
-  primaryColor: '#1890ff',
   accountId: TEST_ACCOUNT_ID,
-  greeting: 'Hi there! How can I help you?',
-  newMessagePlaceholder: 'Start typing...',
-  emailInputPlaceholder: 'What is your email address?',
-  newMessagesNotificationText: 'View new messages',
-  agentAvailableText: 'Agents are online!',
-  agentUnavailableText: 'Agents are not available at the moment.',
+  greeting:
+    'Welcome to the Papercups demo! Feel free to send test messages below :)',
   customer: {
     name: 'Demo User',
     // Ad hoc metadata
@@ -23,18 +15,81 @@ const config = {
       page: 'github',
     },
   },
-  // NB: we override these values during development -- note that the
+  // NB: we override these values during development if we want to test against our local server
   // baseUrl: 'http://localhost:4000',
+  // For the demo, we just point at our demo staging environment
   baseUrl: 'https://alex-papercups-staging.herokuapp.com',
-  requireEmailUpfront: true,
-  showAgentAvailability: true,
-  hideToggleButton: false,
-  defaultIsOpen: false,
-  iconVariant: 'filled',
+};
+
+const CustomerMessage = ({message}) => {
+  return (
+    <div className={`flex my-2 justify-end`}>
+      <div
+        style={{maxWidth: '80%'}}
+        className={`rounded py-2 px-3 text-white bg-blue-500`}
+      >
+        {message.body}
+      </div>
+    </div>
+  );
+};
+
+const AgentMessage = ({message}) => {
+  const {user = {}} = message;
+  const {display_name, full_name, profile_photo_url} = user;
+  const name = display_name || full_name || 'A';
+  const photoUrl = profile_photo_url || null;
+
+  return (
+    <div className={`flex my-2 justify-start items-center `}>
+      {photoUrl && photoUrl.length ? (
+        <div
+          className='flex w-8 h-8 justify-center items-center mr-2 rounded-full'
+          style={{
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundImage: `url(${photoUrl})`,
+          }}
+        ></div>
+      ) : (
+        <div className='flex w-8 h-8 justify-center items-center mr-2 rounded-full text-white bg-blue-500'>
+          {name.slice(0, 1).toUpperCase()}
+        </div>
+      )}
+      <div
+        style={{maxWidth: '80%'}}
+        className={`rounded py-2 px-3 bg-gray-100 dark:bg-gray-700 dark:text-white`}
+      >
+        {message.body}
+      </div>
+    </div>
+  );
+};
+
+const ChatMessages = ({messages = [], customerId, scrollToRef}) => {
+  return (
+    <div className='pt-3'>
+      {messages.map((message, idx) => {
+        const key = message.id || idx;
+        const isMe =
+          message.customer_id === customerId ||
+          (!!message.sent_at && message.type === 'customer');
+
+        return isMe ? (
+          <CustomerMessage key={key} message={message} />
+        ) : (
+          <AgentMessage key={key} message={message} />
+        );
+      })}
+
+      <div key='scroll-el' ref={scrollToRef} />
+    </div>
+  );
 };
 
 const Chat = ({config, state, onSendMessage, scrollToRef}) => {
   const [message, setMessageBody] = React.useState('');
+  const {messages = [], customerId} = state;
 
   const handleChangeMessage = (e) => setMessageBody(e.target.value);
 
@@ -65,7 +120,11 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
             overflow: 'scroll',
           }}
         >
-          <Body config={config} state={state} scrollToRef={scrollToRef} />
+          <ChatMessages
+            messages={messages}
+            customerId={customerId}
+            scrollToRef={scrollToRef}
+          />
         </div>
 
         <div className='px-4 pb-4'>
