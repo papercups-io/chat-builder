@@ -43,49 +43,6 @@ const config = {
   iconVariant: 'filled',
 };
 
-// const App = () => {
-//   return (
-//     <ChatBuilder config={config}>
-//       {({config, state, onClose, onSendMessage, onToggleOpen, scrollToRef}) => {
-//         console.log({
-//           config,
-//           state,
-//           onClose,
-//           onSendMessage,
-//           onToggleOpen,
-//           scrollToRef,
-//         });
-
-//         return (
-//           <div
-//             style={{
-//               display: 'flex',
-//               flexDirection: 'column',
-//               maxHeight: 640,
-//               maxWidth: 480,
-//               margin: 16,
-//             }}
-//           >
-//             {/* <ChatHeader config={config} state={state} onClose={onClose} /> */}
-//             <div style={{flex: 1, height: '100%', overflow: 'scroll'}}>
-//               <ChatBody
-//                 config={config}
-//                 state={state}
-//                 scrollToRef={scrollToRef}
-//               />
-//             </div>
-//             <ChatFooter
-//               config={config}
-//               state={state}
-//               onSendMessage={onSendMessage}
-//             />
-//           </div>
-//         );
-//       }}
-//     </ChatBuilder>
-//   );
-// };
-
 const App = () => {
   return (
     <div>

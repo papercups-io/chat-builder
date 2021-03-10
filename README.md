@@ -14,14 +14,102 @@ npm install --save @papercups-io/chat-builder
 
 First, sign up at https://app.papercups.io/register to get your account token. Your account token is what you will use to pass in as the `accountId` below.
 
+To create a custom chat UI within the skeleton of a standard chat widget, you can use the `header`, `body`, `footer`, `toggle`, and `notifications` props to render custom React components:
+
 ```tsx
 import React from 'react';
 import {ChatBuilder} from '@papercups-io/chat-builder';
 
-const ExamplePage = () => {
-  // TODO
+const Example = () => {
+  const config = {
+    // Put your personal account ID here
+    accountId: '__MY_ACCOUNT_ID__',
+    // Use a `greeting` to set the initial message in the chat
+    greeting: 'Welcome to my website! Ask me anything below :)',
+    // Provide some metadata about the person you're chatting with (if available)
+    customer: {
+      name: 'Demo User',
+      // Ad hoc metadata
+      metadata: {
+        page: 'github',
+      },
+    },
+  };
+
+  return (
+    <ChatBuilder
+      config={config}
+      header={({config, state, onClose}) => {
+        return <Header {...} />;
+      }}
+      body={({config, state, scrollToRef}) => {
+        return <Body {...} />;
+      }}
+      footer={({config, state, onSendMessage}) => {
+        return <Footer {...} />;
+      }}
+      toggle={({state, onToggleOpen}) => {
+        return <Toggle {...} />;
+      }}
+    />
+  );
 };
 ```
+
+To create a completely custom UI from scratch, pass in your custom chat component as `children` like so:
+
+```tsx
+import React from 'react';
+import {ChatBuilder} from '@papercups-io/chat-builder';
+
+const Example = () => {
+  const config = {
+    // Put your personal account ID here
+    accountId: '__MY_ACCOUNT_ID__',
+    // Use a `greeting` to set the initial message in the chat
+    greeting: 'Welcome to my website! Ask me anything below :)',
+    // Provide some metadata about the person you're chatting with (if available)
+    customer: {
+      name: 'Demo User',
+      // Ad hoc metadata
+      metadata: {
+        page: 'github',
+      },
+    },
+  };
+
+  return (
+    <ChatBuilder
+      config={config}
+      // Optional callbacks
+      onChatLoaded={() => console.log('Chat loaded!')}
+      onChatClosed={() => console.log('Chat closed!')}
+      onChatOpened={() => console.log('Chat opened!')}
+      onMessageReceived={(message) => console.log('Message received!', message)}
+      onMessageSent={(message) => console.log('Message sent!', message)}
+    >
+      {({config, state, onClose, onSendMessage, onToggleOpen, scrollToRef}) => {
+        return (
+          <MyCustomChat
+            config={config}
+            state={state}
+            onClose={onClose}
+            onSendMessage={onSendMessage}
+            onToggleOpen={onToggleOpen}
+            scrollToRef={scrollToRef}
+          />
+        );
+      }}
+    </ChatBuilder>
+  );
+};
+```
+
+## Demo
+
+To see an example of a completely custom chat UI built with `@papercups-io/chat-builder` and TailwindCSS, visit https://papercups-io.github.io/chat-builder/
+
+The code can be found here: https://github.com/papercups-io/chat-builder/blob/master/examples/tailwind/src/App.js
 
 ## Questions?
 
