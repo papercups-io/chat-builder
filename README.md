@@ -4,6 +4,13 @@
 
 [![NPM](https://img.shields.io/npm/v/@papercups-io/chat-builder.svg)](https://www.npmjs.com/package/@papercups-io/chat-builder) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## Demo
+
+Example of an imitation of Intercom's design using the Papercups `ChatBuilder` component:
+
+<img width="400" alt="Intercom UI example" src="https://user-images.githubusercontent.com/5264279/110964071-c8716980-8320-11eb-8eb7-ec057f998fe7.png">
+
+
 ## Install
 
 ```bash
