@@ -4,6 +4,12 @@
 
 [![NPM](https://img.shields.io/npm/v/@papercups-io/chat-builder.svg)](https://www.npmjs.com/package/@papercups-io/chat-builder) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## Try it out
+
+- [CodePen](https://codepen.io/reichertjalex/pen/GRNLLvG?editors=0010)
+- [CodeSandbox](https://codesandbox.io/s/papercups-custom-chat-builder-j2hzj?file=/src/App.js)
+- [StackBlitz](https://stackblitz.com/edit/papercups-custom-chat-builder?file=src/App.js)
+
 ## Demo
 
 Example of an imitation of Intercom's design using the Papercups `ChatBuilder` component:
@@ -112,7 +118,7 @@ const Example = () => {
 };
 ```
 
-## Demo
+## Live demo
 
 To see an example of a completely custom chat UI built with `@papercups-io/chat-builder` and TailwindCSS, visit https://papercups-io.github.io/chat-builder/
 
