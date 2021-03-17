@@ -5,11 +5,7 @@ const ChatBody = ({state, scrollToRef}: BodyProps) => {
   const {customerId, messages = []} = state;
 
   return (
-    <div
-      style={{
-        padding: 8,
-      }}
-    >
+    <div style={{padding: 8}}>
       {messages.map((message: any, idx: number) => {
         const isMe =
           message.customer_id === customerId ||

@@ -131,6 +131,11 @@ type Props = {
   config: Config;
   debug?: boolean;
   isOpenByDefault?: boolean;
+  styles?: {
+    header?: Record<string, any>;
+    body?: Record<string, any>;
+    footer?: Record<string, any>;
+  };
   // TODO: figure out what type this should be
   children?: (options: ChildrenProps) => React.ReactElement;
   // UI components
@@ -1044,7 +1049,7 @@ class ChatBuilder extends React.Component<Props, State> {
   }
 
   render() {
-    const {config, children} = this.props;
+    const {config, styles = {}, children} = this.props;
     const {
       isOpen,
       shouldDisplayNotifications,
@@ -1093,6 +1098,7 @@ class ChatBuilder extends React.Component<Props, State> {
                 flex: 1,
                 overflowY: 'scroll',
                 // boxShadow: 'rgba(0, 0, 0, 0.2) 0px 21px 4px -20px inset',
+                ...styles.body,
               }}
             >
               {this.props.body &&
