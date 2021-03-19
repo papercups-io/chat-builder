@@ -41,4 +41,5 @@ export type {
   WidgetConfig,
   WidgetSettings,
 };
+
 export {ChatBuilder, ChatHeader, ChatBody, ChatFooter, ChatToggle};

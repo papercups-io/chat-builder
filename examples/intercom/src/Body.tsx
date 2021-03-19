@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import {BodyProps} from '@papercups-io/chat-builder';
+import dayjs from 'dayjs';
 
 const Box = styled.div(({children, theme, ...props}: any) => {
   return {...props};
@@ -18,52 +20,153 @@ const BodyContainer = styled(Box)`
   padding: 24px 24px 0px;
 `;
 
-const Body = ({state, scrollToRef}: any) => {
+const groupMessagesByDate = (messages: Array<any>) => {
+  return messages.reduce((acc, message, idx) => {
+    const next = messages[idx + 1] || null;
+    const date =
+      message.type === 'bot' && next ? next.created_at : message.created_at;
+    const formatted = dayjs(date).format('MMMM DD');
+
+    return {...acc, [formatted]: (acc[formatted] || []).concat(message)};
+  }, {});
+};
+
+const CustomerMessage = ({message, isNextSameSender}: any) => {
+  return (
+    <Flex
+      style={{
+        paddingBottom: isNextSameSender ? 8 : 16,
+        paddingLeft: 48,
+        paddingRight: 0,
+        justifyContent: 'flex-end',
+      }}
+    >
+      <Box
+        style={{
+          fontSize: 14,
+          borderRadius: 5,
+          padding: '16px 20px',
+          background: 'rgb(24, 144, 255)',
+          color: '#fff',
+          whiteSpace: 'pre-wrap',
+        }}
+      >
+        {message.body}
+      </Box>
+    </Flex>
+  );
+};
+
+const AgentMessage = ({message, isNextSameSender}: any) => {
+  const profilePhotoUrl = message.user?.profile_photo_url;
+  const shouldDisplayAvatar = !isNextSameSender;
+
+  return (
+    <Flex
+      style={{
+        position: 'relative',
+        paddingBottom: isNextSameSender ? 8 : 16,
+        paddingLeft: 44,
+        paddingRight: 48,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+      }}
+    >
+      {shouldDisplayAvatar && (
+        <Box
+          style={{
+            height: 32,
+            width: 32,
+            position: 'absolute',
+            left: 0,
+            bottom: 24,
+
+            borderRadius: '50%',
+            justifyContent: 'center',
+            alignItems: 'center',
+
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundImage: `url(${profilePhotoUrl})`,
+          }}
+        />
+      )}
+
+      <Box
+        style={{
+          fontSize: 14,
+          borderRadius: 5,
+          padding: '16px 20px',
+          background: 'rgb(245, 245, 245)',
+          color: 'rgba(0,0,0,.65)',
+          whiteSpace: 'pre-wrap',
+        }}
+      >
+        {message.body}
+      </Box>
+    </Flex>
+  );
+};
+
+const Body = ({state, scrollToRef}: BodyProps) => {
   const {customerId, messages = []} = state;
+  const grouped = groupMessagesByDate(messages);
 
   return (
     <BodyContainer>
-      {messages.map((message: any, idx: number) => {
-        // TODO: clean/DRY up a bit?
-        const isCustomer =
-          message.customer_id === customerId ||
-          (!!message.sent_at && message.type === 'customer');
-        const next = messages[idx + 1];
-        const isNextMessageCustomer =
-          next &&
-          (next.customer_id === customerId ||
-            (!!next.sent_at && next.type === 'customer'));
-        const isNextSameSender = isCustomer === isNextMessageCustomer;
+      {Object.keys(grouped).map((date) => {
+        const messages = grouped[date];
 
         return (
-          <Flex
-            key={message.id || idx}
-            style={{
-              paddingBottom: isNextSameSender ? 8 : 16,
-              paddingLeft: isCustomer ? 48 : 16,
-              paddingRight: isCustomer ? 0 : 48,
-              justifyContent: isCustomer ? 'flex-end' : 'flex-start',
-            }}
-          >
-            <div
+          <Box key={date}>
+            <Flex
               style={{
+                paddingTop: 14,
+                paddingBottom: 14,
                 fontSize: 14,
-                borderRadius: 5,
-                padding: '16px 20px',
-                background: isCustomer
-                  ? 'rgb(24, 144, 255)'
-                  : 'rgb(245, 245, 245)',
-                color: isCustomer ? '#fff' : 'rgba(0,0,0,.65)',
-                whiteSpace: 'pre-wrap',
+                color: 'rgb(115, 115, 118)',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              {message.body}
-            </div>
-          </Flex>
+              {date}
+            </Flex>
+
+            {messages.map((message: any, idx: number) => {
+              // TODO: clean/DRY up a bit?
+              const isCustomer =
+                message.customer_id === customerId ||
+                (!!message.sent_at && message.type === 'customer');
+              const next = messages[idx + 1];
+              const isNextMessageCustomer =
+                next &&
+                (next.customer_id === customerId ||
+                  (!!next.sent_at && next.type === 'customer'));
+              const isNextSameSender = isCustomer === isNextMessageCustomer;
+
+              if (isCustomer) {
+                return (
+                  <CustomerMessage
+                    key={message.id || idx}
+                    message={message}
+                    isNextSameSender={isNextSameSender}
+                  />
+                );
+              } else {
+                return (
+                  <AgentMessage
+                    key={message.id || idx}
+                    message={message}
+                    isNextSameSender={isNextSameSender}
+                  />
+                );
+              }
+            })}
+          </Box>
         );
       })}
 
-      <div key='scroll-el' ref={scrollToRef} />
+      <Box key='scroll-el' ref={scrollToRef} />
     </BodyContainer>
   );
 };
