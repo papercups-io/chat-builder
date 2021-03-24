@@ -1,0 +1,30 @@
+@import '~nes.css/css/nes.css';
+
+html,
+body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  height: 100%;
+  width: 100%;
+  font-size: 14px;
+}
+
+.footer-input {
+  border: none;
+}
+
+.footer-input:focus {
+  outline: none;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+#toggle-btn:focus {
+  box-shadow: none;
+}
