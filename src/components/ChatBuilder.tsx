@@ -83,7 +83,7 @@ const ToggleButtonContainer = styled.div({
   right: 20,
 });
 
-type Config = {
+export type Config = {
   accountId: string;
   customerId?: string;
   primaryColor?: string;
@@ -104,15 +104,20 @@ type Config = {
   isCloseable?: boolean;
 };
 
-interface Options {
+export interface Options {
   config: Config;
   state: State;
 }
 
+export type OnSendMessage = (
+  message: Partial<Message>,
+  email?: string
+) => Promise<any>;
+export type ScrollToRef = (el: any) => void;
 export type HeaderProps = Options & {onClose: () => void};
-export type BodyProps = Options & {scrollToRef: (el: any) => void};
+export type BodyProps = Options & {scrollToRef: ScrollToRef};
 export type FooterProps = Options & {
-  onSendMessage: (message: Partial<Message>, email?: string) => Promise<any>;
+  onSendMessage: OnSendMessage;
 };
 export type ToggleButtonProps = Options & {onToggleOpen: () => void};
 export type NotificationsProps = Options & {
@@ -122,9 +127,9 @@ export type NotificationsProps = Options & {
 
 export type ChildrenProps = Options & {
   onClose: () => void;
-  onSendMessage: (message: Partial<Message>, email?: string) => Promise<any>;
+  onSendMessage: OnSendMessage;
   onToggleOpen: () => void;
-  scrollToRef: (el: any) => void;
+  scrollToRef: ScrollToRef;
 };
 
 type Props = {
@@ -152,7 +157,7 @@ type Props = {
   onMessageReceived?: (message: Message) => void;
 };
 
-type State = {
+export type State = {
   config: WidgetConfig;
   messages: Array<Message>;
   customerId?: string | null;
