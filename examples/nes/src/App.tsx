@@ -8,27 +8,23 @@ import Footer from './Footer';
 import ToggleButton from './ToggleButton';
 
 // NB: during development, replace this with a valid account ID from your dev db
-const TEST_ACCOUNT_ID = '1d1b0840-ae85-4690-b384-3ed4fd276040';
+const TEST_ACCOUNT_ID = 'eb504736-0f20-4978-98ff-1a82ae60b266';
 
 const config = {
   accountId: TEST_ACCOUNT_ID,
-  greeting: 'Greetings traveler! How may I be of service?',
-  newMessagePlaceholder: 'Start typing...',
+  greeting:
+    'Welcome to the Papercups demo! Feel free to send test messages below :)',
   customer: {
-    name: 'Test User',
-    email: 'test@test.com',
-    external_id: '123',
+    name: 'Demo User',
     // Ad hoc metadata
     metadata: {
-      plan: 'starter',
-      registered_at: '2020-09-01',
-      age: 25,
-      valid: true,
+      page: 'nes',
     },
   },
-  baseUrl: 'http://localhost:4000',
-  // baseUrl: 'https://alex-papercups-staging.herokuapp.com',
-  defaultIsOpen: false,
+  // NB: we override these values during development if we want to test against our local server
+  // baseUrl: 'http://localhost:4000',
+  // For the demo, we just point at our demo staging environment
+  baseUrl: 'https://alex-papercups-staging.herokuapp.com',
 };
 
 const ChatInternalContainer = styled.div`
@@ -55,7 +51,7 @@ const ChatWindowContainer = styled.div(({isOpen}: {isOpen?: boolean}) => ({
   height: isOpen ? 'calc(100% - 120px)' : 0,
   margin: 0,
   maxHeight: ['60%', '704px'],
-  maxWidth: ['90%', '705px'],
+  maxWidth: ['90%', '640px'],
   minHeight: isOpen ? 250 : 0,
   opacity: isOpen ? 1 : 0,
   overflow: 'hidden',
@@ -63,32 +59,13 @@ const ChatWindowContainer = styled.div(({isOpen}: {isOpen?: boolean}) => ({
   position: 'fixed',
   right: 20,
   transform: isOpen ? 'none' : 'translateY(4px) translateZ(0px)',
-  width: 705,
+  width: 640,
   zIndex: 2147483000,
 }));
 
 const App = () => {
   return (
     <div>
-      {/* {Array.from({length: 20}).map((_, i) => {
-        return (
-          <p key={i}>
-            Pellentesque habitant morbi tristique senectus et netus et malesuada
-            fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae,
-            ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam
-            egestas semper. Aenean ultricies mi vitae est. Mauris placerat
-            eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.
-            Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit
-            amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros
-            ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim
-            in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id
-            cursus faucibus, tortor neque egestas augue, eu vulputate magna eros
-            eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan
-            porttitor, facilisis luctus, metus
-          </p>
-        );
-      })} */}
-
       <ChatBuilder config={config}>
         {({config, state, onSendMessage, onToggleOpen, scrollToRef}) => {
           return (

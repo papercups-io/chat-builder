@@ -10,6 +10,8 @@
     "eject": "node ../../node_modules/react-scripts/bin/react-scripts.js eject"
   },
   "dependencies": {
+    "@emotion/react": "file:../../node_modules/@emotion/react",
+    "@emotion/styled": "file:../../node_modules/@emotion/styled",
     "@papercups-io/chat-builder": "file:../..",
     "@testing-library/jest-dom": "file:../../node_modules/@testing-library/jest-dom",
     "@testing-library/react": "file:../../node_modules/@testing-library/react",
