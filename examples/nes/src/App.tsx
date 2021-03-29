@@ -27,6 +27,14 @@ const config = {
   baseUrl: 'https://alex-papercups-staging.herokuapp.com',
 };
 
+const Title = styled.h1`
+  margin-bottom: 1em;
+`;
+
+const Paragraph = styled.p`
+  margin-bottom: 1.4em;
+`;
+
 const ChatInternalContainer = styled.div`
   background-clip: padding-box;
   border-image-outset: 2;
@@ -70,6 +78,60 @@ const ChatWindowContainer = styled.div(({isOpen}: {isOpen?: boolean}) => ({
 const App = () => {
   return (
     <div>
+      <div style={{padding: 40, width: 800, maxWidth: '80%'}}>
+        <Title>
+          <a
+            href='https://github.com/papercups-io/papercups'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Papercups
+          </a>{' '}
+          live demo: NES
+        </Title>
+
+        <Paragraph>
+          This is an example of a custom live chat component built on top of the{' '}
+          <a
+            href='https://github.com/papercups-io/chat-builder'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            @papercups-io/chat-builder
+          </a>{' '}
+          library using{' '}
+          <a
+            href='https://nostalgic-css.github.io/NES.css'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            NES.css
+          </a>
+          .
+        </Paragraph>
+
+        <Paragraph>
+          Try sending us a message in the chat window to the right! One of the
+          maintainers will respond (eventually).
+        </Paragraph>
+
+        <Paragraph>
+          The code for this example can be found{' '}
+          <a
+            href='https://github.com/papercups-io/chat-builder/tree/master/examples/nes'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            here
+          </a>
+          .
+        </Paragraph>
+
+        <Paragraph>
+          <i className='nes-octocat animate'></i>
+        </Paragraph>
+      </div>
+
       <ChatBuilder config={config}>
         {({config, state, onSendMessage, onToggleOpen, scrollToRef}) => {
           return (
