@@ -50,8 +50,8 @@ const ChatWindowContainer = styled.div(({isOpen}: {isOpen?: boolean}) => ({
   bottom: 100,
   height: isOpen ? 'calc(100% - 120px)' : 0,
   margin: 0,
-  maxHeight: ['60%', '704px'],
-  maxWidth: ['90%', '640px'],
+  maxHeight: '704px',
+  maxWidth: '640px',
   minHeight: isOpen ? 250 : 0,
   opacity: isOpen ? 1 : 0,
   overflow: 'hidden',
@@ -61,6 +61,10 @@ const ChatWindowContainer = styled.div(({isOpen}: {isOpen?: boolean}) => ({
   transform: isOpen ? 'none' : 'translateY(4px) translateZ(0px)',
   width: 640,
   zIndex: 2147483000,
+  '@media(max-width: 640px)': {
+    maxHeight: '70%',
+    maxWidth: '90%',
+  },
 }));
 
 const App = () => {
