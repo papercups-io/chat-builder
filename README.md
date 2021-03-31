@@ -4,6 +4,10 @@
 
 [![NPM](https://img.shields.io/npm/v/@papercups-io/chat-builder.svg)](https://www.npmjs.com/package/@papercups-io/chat-builder) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+# What is chatbuilder
+
+Chat-builder is a library that allows you to create your own custom chat widget while leveraging the power of Papercups
+
 ## Try it out
 
 - [CodePen](https://codepen.io/reichertjalex/pen/GRNLLvG?editors=0010)
