@@ -12,8 +12,17 @@ const ChatHeader = ({config}: HeaderProps) => {
         color: '#fff',
       }}
     >
-      <h2 style={{marginTop: 4, marginBottom: 8}}>{title}</h2>
-      <p style={{margin: 0}}>{subtitle}</p>
+      <h2
+        style={{
+          marginTop: 4,
+          marginBottom: 4,
+          fontWeight: 500,
+          color: 'rgb(255, 255, 255)',
+        }}
+      >
+        {title}
+      </h2>
+      <p style={{margin: 0, color: 'rgba(255, 255, 255, 0.8)'}}>{subtitle}</p>
     </div>
   );
 };
