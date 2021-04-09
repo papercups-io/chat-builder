@@ -20,8 +20,13 @@
     "test:lint": "eslint src/**/*.ts*",
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
-    "predeploy": "cd examples/tailwind && npm install && npm run build",
-    "deploy": "gh-pages -d examples/tailwind/build"
+    "build:tailwind": "cd examples/tailwind && npm install && npm run build",
+    "build:ant": "cd examples/ant && npm install && npm run build",
+    "build:nes": "cd examples/nes && npm install && npm run build",
+    "build:intercom": "cd examples/intercom && npm install && npm run build",
+    "build:examples": "npm run build:ant && npm run build:nes && npm run build:intercom",
+    "predeploy": "npm run build:examples && mkdir -p examples/build && cp -R examples/ant/build examples/build/ant && cp -R examples/intercom/build examples/build/intercom && cp -R examples/nes/build examples/build/nes",
+    "deploy": "gh-pages -d examples/build"
   },
   "peerDependencies": {
     "react": "^16.0.0"
