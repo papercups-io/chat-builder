@@ -107,11 +107,14 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
     <div
       className='flex flex-col'
       style={{
-        height: 640,
         width: 480,
+        maxWidth: '100%',
       }}
     >
-      <div className='flex flex-col border rounded-xl flex-1 mb-6 dark:bg-gray-800'>
+      <div
+        className='flex flex-col border rounded-xl flex-1 mb-6 dark:bg-gray-800'
+        style={{height: 560}}
+      >
         <div
           className='pt-4 px-4 mb-4'
           style={{
@@ -141,7 +144,7 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
         </div>
       </div>
 
-      <div>
+      <div className='flex-1'>
         <button
           className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full w-full focus:outline-none'
           onClick={handleSendMessage}

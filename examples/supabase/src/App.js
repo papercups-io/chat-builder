@@ -138,6 +138,7 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
       style={{
         height: 560,
         width: 400,
+        maxWidth: '100%',
       }}
     >
       <div className='flex flex-col border border-gray-300 rounded-md flex-1 max-h-full dark:bg-gray-600'>
