@@ -1,4 +1,8 @@
-# Getting Started with Create React App
+# Supabase UI example
+
+> Lightweight example of the [@papercups-io/chat-builder]() library used with [TailwindCSS](https://tailwindcss.com/) + [Supabase UI](https://ui.supabase.com/)
+
+<img alt="Supabase UI example" width="480" src="https://user-images.githubusercontent.com/5264279/114621881-40fa7b80-9c7b-11eb-9031-a77df3cd636f.gif" />
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
