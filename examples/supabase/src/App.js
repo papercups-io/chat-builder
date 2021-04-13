@@ -172,6 +172,8 @@ const Chat = ({config, state, onSendMessage, scrollToRef}) => {
 };
 
 const App = () => {
+  console.log('Initializing Supabase/Papercups example...');
+
   const [isDarkMode, setDarkMode] = React.useState(true);
 
   const handleToggleMode = (e) => {
