@@ -24,8 +24,9 @@
     "build:ant": "cd examples/ant && npm install && npm run build",
     "build:nes": "cd examples/nes && npm install && npm run build",
     "build:intercom": "cd examples/intercom && npm install && npm run build",
-    "build:examples": "npm run build:ant && npm run build:nes && npm run build:intercom",
-    "predeploy": "npm run build:examples && mkdir -p examples/build && cp -R examples/ant/build examples/build/ant && cp -R examples/intercom/build examples/build/intercom && cp -R examples/nes/build examples/build/nes",
+    "build:supabase": "cd examples/supabase && npm install && npm run build",
+    "build:examples": "npm run build:ant && npm run build:nes && npm run build:intercom && npm run build:supabase",
+    "predeploy": "npm run build:examples && mkdir -p examples/build && cp -R examples/ant/build examples/build/ant && cp -R examples/intercom/build examples/build/intercom && cp -R examples/nes/build examples/build/nes && cp -R examples/supabase/build examples/build/supabase",
     "deploy": "gh-pages -d examples/build"
   },
   "peerDependencies": {
