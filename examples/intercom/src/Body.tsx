@@ -35,6 +35,8 @@ const groupMessagesByDate = (messages: Array<any>) => {
 };
 
 const CustomerMessage = ({message, isNextSameSender}: any) => {
+  const isSending = !message.created_at;
+
   return (
     <Flex
       style={{
@@ -42,6 +44,8 @@ const CustomerMessage = ({message, isNextSameSender}: any) => {
         paddingLeft: 48,
         paddingRight: 0,
         justifyContent: 'flex-end',
+        // TODO: come up with a better UI for "sending" state
+        opacity: isSending ? 0.6 : 1,
       }}
     >
       <Box

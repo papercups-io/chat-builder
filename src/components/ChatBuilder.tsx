@@ -1,15 +1,21 @@
 import React from 'react';
 import {Presence} from 'phoenix';
 import styled from '@emotion/styled';
+import {isAgentMessage, Papercups} from '@papercups-io/browser';
+
 import PapercupsBranding from './PapercupsBranding';
 import {
   noop,
-  areDatesEqual,
   isCustomerMessage,
   shorten,
   setupCustomEventHandlers,
 } from '../helpers/utils';
-import {CustomerMetadata, Message, WidgetConfig} from '../helpers/types';
+import {
+  CustomerMetadata,
+  Message,
+  WidgetConfig,
+  WidgetSettings,
+} from '../helpers/types';
 import {isDev} from '../helpers/config';
 import Logger from '../helpers/logger';
 import {
@@ -17,7 +23,6 @@ import {
   isWindowHidden,
 } from '../helpers/visibility';
 import {getUserInfo} from '../track/info';
-import {Papercups} from '../core/papercups';
 
 const Box = styled.div``;
 
@@ -184,6 +189,31 @@ class ChatBuilder extends React.Component<Props, State> {
 
     const {children, isOpenByDefault} = props;
     const isOpen = typeof children === 'function' || !!isOpenByDefault;
+    // TODO: this may need to be handled in the componentDidMount for next.js to handle "window"
+    const win = window as any;
+    const doc = (document || win.document) as any;
+    const debugModeEnabled = isDev(win) || !!props.debug;
+
+    this.papercups = Papercups.init({
+      customerId: props.config.customerId,
+      accountId: props.config.accountId,
+      baseUrl: props.config.baseUrl,
+      customer: props.config.customer,
+      debug: props.debug,
+      onPresenceSync: this.onPresenceSync,
+      onSetCustomerId: this.onSetCustomerId,
+      onSetConversationId: this.onSetConversationId,
+      onSetWidgetSettings: this.onWidgetSettingsLoaded,
+      onMessagesUpdated: this.onMessagesUpdated,
+      onConversationCreated: this.onConversationCreated,
+      onMessageCreated: this.handleNewMessage,
+    });
+
+    this.logger = new Logger(debugModeEnabled);
+    this.subscriptions = [
+      setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
+      addVisibilityEventListener(doc, this.handleVisibilityChange),
+    ];
 
     this.state = {
       config: {} as WidgetConfig,
@@ -203,49 +233,12 @@ class ChatBuilder extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    const win = window as any;
-    const doc = (document || win.document) as any;
-    const debugModeEnabled = isDev(win) || !!this.props.debug;
-
-    this.papercups = Papercups.init({
-      customerId: this.props.config.customerId,
-      accountId: this.props.config.accountId,
-      baseUrl: this.props.config.baseUrl,
-      customer: this.props.config.customer,
-      debug: this.props.debug,
-      onPresenceSync: this.onPresenceSync,
-      onSetCustomerId: this.onSetCustomerId,
-      onSetConversationId: (conversationId: string) =>
-        console.log('onSetConversationId:', conversationId),
-      onMessagesUpdated: (messages: Array<Message>) =>
-        console.log('onMessagesUpdated:', messages),
-      onConversationCreated: this.onConversationCreated,
-      onMessageCreated: this.handleNewMessage,
-    });
-    this.papercups.connect();
-
-    this.logger = new Logger(debugModeEnabled);
-    this.subscriptions = [
-      setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
-      addVisibilityEventListener(doc, this.handleVisibilityChange),
-    ];
-
-    const config = await this.loadWidgetSettings();
-    const {customerId: cachedCustomerId, metadata} = config;
-    const isValidCustomer = await this.papercups.isValidCustomerId(
-      cachedCustomerId
-    );
-    const customerId = isValidCustomer ? cachedCustomerId : null;
-
-    this.setState({customerId});
-
-    await this.fetchLatestConversation(customerId, metadata);
+    await this.papercups.start();
 
     this.handleChatLoaded();
   }
 
   componentWillUnmount() {
-    // this.channel && this.channel.leave();
     this.papercups.disconnect();
     this.subscriptions.forEach((unsubscribe) => {
       if (typeof unsubscribe === 'function') {
@@ -254,10 +247,7 @@ class ChatBuilder extends React.Component<Props, State> {
     });
   }
 
-  async loadWidgetSettings() {
-    // TODO: use `subscription_plan` from settings.account to determine
-    // whether to display the Papercups branding or not in the chat window
-    const settings = await this.papercups.fetchWidgetSettings();
+  onWidgetSettingsLoaded = (settings: WidgetSettings) => {
     const {
       accountId,
       primaryColor,
@@ -303,12 +293,9 @@ class ChatBuilder extends React.Component<Props, State> {
     };
 
     this.setState({config});
-
     // Set some metadata on the widget to better understand usage
-    await this.papercups.updateWidgetSettingsMetadata(metadata);
-
-    return config;
-  }
+    this.papercups.updateWidgetSettingsMetadata(metadata);
+  };
 
   customEventHandlers = (event: any) => {
     if (!event || !event.type) {
@@ -336,7 +323,6 @@ class ChatBuilder extends React.Component<Props, State> {
 
   setOpenState = (isOpen: boolean) => {
     // TODO: execute toggle callbacks
-    // TODO: scroll to ref?
     this.setState({isOpen}, () => {
       this.handleVisibilityChange();
 
@@ -368,55 +354,57 @@ class ChatBuilder extends React.Component<Props, State> {
     }
   };
 
-  sendCustomerUpdate = (payload: any) => {
-    const {customerId} = payload;
-    const customerBrowserInfo = getUserInfo(window);
-    const metadata = {
-      ...customerBrowserInfo,
-      ...this.papercups.formatCustomerMetadata(),
-    };
+  handleNewMessageCallbacks = (message: Message) => {
+    const {onMessageReceived = noop, onMessageSent = noop} = this.props;
 
-    return this.papercups.updateExistingCustomer(customerId, metadata);
-  };
-
-  handleMessageReceived = (message: Message) => {
-    const {onMessageReceived = noop} = this.props;
-    const {user_id: userId, customer_id: customerId} = message;
-    const isFromAgent = !!userId && !customerId;
-    // Only invoke callback if message is from agent, because we currently track
-    // `message:received` events to know if a message went through successfully
-    if (isFromAgent) {
+    if (isAgentMessage(message)) {
       onMessageReceived && onMessageReceived(message);
+    } else if (isCustomerMessage(message)) {
+      onMessageSent && onMessageSent(message);
+    } else {
+      this.logger.error('Unexpected message:', message);
     }
-  };
-
-  handleMessageSent = (message: Message) => {
-    const {onMessageSent = noop} = this.props;
-
-    onMessageSent && onMessageSent(message);
-  };
-
-  handleUnseenMessages = (payload: any) => {
-    this.logger.debug('Handling unseen messages:', payload);
-    this.setState({shouldDisplayNotifications: true});
-  };
-
-  handleMessagesSeen = () => {
-    this.logger.debug('Handling messages seen');
-    this.setState({shouldDisplayNotifications: false});
-  };
-
-  onConversationCreated = (customerId: string, data: any) => {
-    this.logger.debug('Handling conversation created:', data);
-    const {customer: metadata} = this.props.config;
-
-    setTimeout(() => this.fetchLatestConversation(customerId, metadata), 1000);
   };
 
   onSetCustomerId = (customerId: string) => {
     this.logger.debug('Setting customer ID:', customerId);
 
     this.setState({customerId});
+
+    if (!customerId) {
+      return;
+    }
+
+    const customerBrowserInfo = getUserInfo(window);
+    const metadata = {
+      ...customerBrowserInfo,
+      ...this.papercups.formatCustomerMetadata(),
+    };
+
+    this.papercups.updateExistingCustomer(customerId, metadata);
+  };
+
+  onSetConversationId = (conversationId: string) => {
+    this.setState({conversationId});
+  };
+
+  onConversationCreated = (customerId: string, data: any) => {
+    // Handle conversation created event
+    this.logger.debug('Conversation created:', {customerId, data});
+  };
+
+  onMessagesUpdated = (messages: Array<Message>) => {
+    this.setState({messages}, () => this.scrollIntoView());
+
+    const unseenMessages = messages.filter(
+      (msg: Message) => !msg.seen_at && !!msg.user_id
+    );
+
+    if (unseenMessages.length > 0) {
+      const [firstUnseenMessage] = unseenMessages;
+
+      this.handleUnseenMessages({message: firstUnseenMessage});
+    }
   };
 
   onPresenceSync = (presence: Presence) => {
@@ -436,6 +424,16 @@ class ChatBuilder extends React.Component<Props, State> {
 
   scrollIntoView = () => {
     this.scrollToEl && this.scrollToEl.scrollIntoView(false);
+  };
+
+  handleUnseenMessages = (payload: any) => {
+    this.logger.debug('Handling unseen messages:', payload);
+    this.setState({shouldDisplayNotifications: true});
+  };
+
+  handleMessagesSeen = () => {
+    this.logger.debug('Handling messages seen');
+    this.setState({shouldDisplayNotifications: false});
   };
 
   // If the page is not visible (i.e. user is looking at another tab),
@@ -481,201 +479,33 @@ class ChatBuilder extends React.Component<Props, State> {
     });
   };
 
-  getDefaultGreeting = (): Array<Message> => {
-    const {greeting} = this.props.config;
-
-    if (!greeting) {
-      return [];
-    }
-
-    return [
-      {
-        type: 'bot',
-        customer_id: 'bot',
-        body: greeting, // 'Hi there! How can I help you?',
-        created_at: new Date().toISOString(), // TODO: what should this be?
-        seen_at: new Date().toISOString(),
-      },
-    ];
-  };
-
-  // Check if we've seen this customer before; if we have, try to fetch
-  // the latest existing conversation for that customer. Otherwise, we wait
-  // until the customer initiates the first message to create the conversation.
-  fetchLatestConversation = async (
-    cachedCustomerId?: string | null,
-    metadata?: CustomerMetadata
-  ) => {
-    // TODO: is there a way to split up some of this logic a little better?
-    const customerId = await this.papercups.checkForExistingCustomer(
-      metadata,
-      cachedCustomerId
-    );
-
-    this.setState({customerId});
-
-    if (!customerId) {
-      // If there's no customerId, we haven't seen this customer before,
-      // so do nothing until they try to create a new message
-      this.setState({messages: [...this.getDefaultGreeting()]});
-
-      return;
-    }
-
-    this.logger.debug('Fetching conversations for customer:', customerId);
-
-    try {
-      const conversation = await this.papercups.fetchLatestCustomerConversation(
-        customerId
-      );
-
-      if (!conversation) {
-        // If there are no conversations yet, wait until the customer creates
-        // a new message to create the new conversation
-        this.setState({messages: [...this.getDefaultGreeting()]});
-        this.papercups.listenForNewConversations(customerId);
-
-        return;
-      }
-
-      const {id: conversationId, messages = []} = conversation;
-      const formattedMessages = messages.sort(
-        (a: any, b: any) => +new Date(a.created_at) - +new Date(b.created_at)
-      );
-
-      this.setState({
-        conversationId,
-        messages: [...this.getDefaultGreeting(), ...formattedMessages],
-      });
-
-      this.joinConversationChannel(conversationId, customerId);
-
-      await this.papercups.updateExistingCustomer(customerId, metadata);
-
-      const unseenMessages = formattedMessages.filter(
-        (msg: Message) => !msg.seen_at && !!msg.user_id
-      );
-
-      if (unseenMessages.length > 0) {
-        const [firstUnseenMessage] = unseenMessages;
-
-        this.handleUnseenMessages({message: firstUnseenMessage});
-      }
-    } catch (err) {
-      this.logger.debug('Error fetching conversations!', err);
-    }
-  };
-
-  joinConversationChannel = (conversationId: string, customerId?: string) => {
-    this.papercups.joinConversationChannel(conversationId, customerId);
-
-    // TODO: this is not handled in papercups.ts... how should we separate the logic?
-    this.sendCustomerUpdate({conversationId, customerId});
-    this.scrollIntoView();
-  };
-
   handleNewMessage = (message: Message) => {
-    this.handleMessageReceived(message);
+    this.handleNewMessageCallbacks(message);
 
-    const {messages = []} = this.state;
-    const unsent = messages.find(
-      (m) =>
-        !m.created_at &&
-        areDatesEqual(m.sent_at, message.sent_at) &&
-        (m.body === message.body || (!m.body && !message.body))
-    );
-    const updated = unsent
-      ? messages.map((m) => (m.sent_at === unsent.sent_at ? message : m))
-      : [...messages, message];
-
-    this.setState({messages: updated}, () => {
-      this.scrollIntoView();
-
-      if (this.shouldMarkAsSeen(message)) {
-        this.markMessagesAsSeen();
-      } else if (!unsent) {
-        // If the message was not `unsent`, we know it came from the other end,
-        // in which case we should indicate that it hasn't been seen yet.
-        this.handleUnseenMessages({message});
-      }
-    });
+    if (this.shouldMarkAsSeen(message)) {
+      this.markMessagesAsSeen();
+    }
   };
 
   shouldMarkAsSeen = (message: Message) => {
     const {isOpen} = this.state;
-    const {user_id: agentId, seen_at: seenAt} = message;
-    const isAgentMessage = !!agentId;
+    const {seen_at: seenAt} = message;
 
     // If already seen or the page is not visible, don't mark as seen
     if (seenAt || isWindowHidden(document)) {
       return false;
     }
 
-    return isAgentMessage && isOpen;
+    return isAgentMessage(message) && isOpen;
   };
 
   markMessagesAsSeen = () => {
     this.papercups.markMessagesAsSeen();
-
     this.handleMessagesSeen();
-    this.setState({
-      messages: this.state.messages.map((msg) => {
-        return msg.seen_at ? msg : {...msg, seen_at: new Date().toISOString()};
-      }),
-    });
   };
 
   handleSendMessage = async (message: Partial<Message>, email?: string) => {
-    const {customerId, conversationId, isSending} = this.state;
-    const {body = '', file_ids = []} = message;
-    const isMissingBody = !body || body.trim().length === 0;
-    const isMissingAttachments = !file_ids || file_ids.length === 0;
-    const shouldSkipSending = isMissingBody && isMissingAttachments;
-
-    if (isSending || shouldSkipSending) {
-      return;
-    }
-
-    // TODO: this seems to be unreliable
-    const sentAt = new Date().toISOString();
-    // TODO: figure out how this should work if `customerId` is null
-    const payload: Message = {
-      ...message,
-      body,
-      customer_id: customerId,
-      type: 'customer',
-      sent_at: sentAt,
-    };
-
-    this.setState(
-      {
-        messages: [...this.state.messages, payload],
-      },
-      () => this.scrollIntoView()
-    );
-
-    if (!customerId || !conversationId) {
-      // TODO: this feels a bit hacky...
-      // Can we just create the message within this call?
-      await this.papercups.initializeNewConversation(customerId, email);
-    }
-
-    this.papercups.sendNewMessage({
-      ...message,
-      body,
-      customer_id: this.state.customerId,
-      sent_at: sentAt,
-    });
-
-    // TODO: should this only be emitted after the message is successfully sent?
-    this.handleMessageSent({
-      ...message,
-      body,
-      type: 'customer',
-      sent_at: sentAt,
-      customer_id: this.state.customerId,
-      conversation_id: this.state.conversationId,
-    });
+    this.papercups.sendNewMessage(message, email);
   };
 
   // TODO: make it possible to disable this feature?
