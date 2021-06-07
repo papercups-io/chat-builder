@@ -15,7 +15,7 @@ const config = {
   customer: {
     name: 'Test User',
     email: 'test@test.com',
-    // external_id: '123',
+    external_id: '123',
     // Ad hoc metadata
     metadata: {
       plan: 'starter',
