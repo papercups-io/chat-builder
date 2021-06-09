@@ -1,6 +1,6 @@
 {
   "name": "@papercups-io/chat-builder",
-  "version": "0.0.7-beta.1",
+  "version": "0.0.7",
   "description": "Papercups chat builder",
   "author": "reichert621",
   "license": "MIT",
