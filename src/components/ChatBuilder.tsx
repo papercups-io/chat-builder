@@ -189,31 +189,6 @@ class ChatBuilder extends React.Component<Props, State> {
 
     const {children, isOpenByDefault} = props;
     const isOpen = typeof children === 'function' || !!isOpenByDefault;
-    // TODO: this may need to be handled in the componentDidMount for next.js to handle "window"
-    const win = window as any;
-    const doc = (document || win.document) as any;
-    const debugModeEnabled = isDev(win) || !!props.debug;
-
-    this.papercups = Papercups.init({
-      customerId: props.config.customerId,
-      accountId: props.config.accountId,
-      baseUrl: props.config.baseUrl,
-      customer: props.config.customer,
-      debug: props.debug,
-      onPresenceSync: this.onPresenceSync,
-      onSetCustomerId: this.onSetCustomerId,
-      onSetConversationId: this.onSetConversationId,
-      onSetWidgetSettings: this.onWidgetSettingsLoaded,
-      onMessagesUpdated: this.onMessagesUpdated,
-      onConversationCreated: this.onConversationCreated,
-      onMessageCreated: this.handleNewMessage,
-    });
-
-    this.logger = new Logger(debugModeEnabled);
-    this.subscriptions = [
-      setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
-      addVisibilityEventListener(doc, this.handleVisibilityChange),
-    ];
 
     this.state = {
       config: {} as WidgetConfig,
@@ -233,6 +208,31 @@ class ChatBuilder extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    const win = window as any;
+    const doc = (document || win.document) as any;
+    const debugModeEnabled = isDev(win) || !!this.props.debug;
+
+    this.papercups = Papercups.init({
+      customerId: this.props.config.customerId,
+      accountId: this.props.config.accountId,
+      baseUrl: this.props.config.baseUrl,
+      customer: this.props.config.customer,
+      debug: this.props.debug,
+      onPresenceSync: this.onPresenceSync,
+      onSetCustomerId: this.onSetCustomerId,
+      onSetConversationId: this.onSetConversationId,
+      onSetWidgetSettings: this.onWidgetSettingsLoaded,
+      onMessagesUpdated: this.onMessagesUpdated,
+      onConversationCreated: this.onConversationCreated,
+      onMessageCreated: this.handleNewMessage,
+    });
+
+    this.logger = new Logger(debugModeEnabled);
+    this.subscriptions = [
+      setupCustomEventHandlers(window, this.EVENTS, this.customEventHandlers),
+      addVisibilityEventListener(doc, this.handleVisibilityChange),
+    ];
+
     await this.papercups.start();
 
     this.handleChatLoaded();
