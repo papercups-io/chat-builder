@@ -89,6 +89,7 @@ export type Config = {
   subtitle?: string;
   baseUrl?: string;
   greeting?: string;
+  awayMessage?: string;
   newMessagePlaceholder?: string;
   emailInputPlaceholder?: string;
   newMessagesNotificationText?: string;
@@ -217,6 +218,8 @@ class ChatBuilder extends React.Component<Props, State> {
       accountId: this.props.config.accountId,
       baseUrl: this.props.config.baseUrl,
       customer: this.props.config.customer,
+      greeting: this.props.config.greeting,
+      awayMessage: this.props.config.awayMessage,
       debug: this.props.debug,
       onPresenceSync: this.onPresenceSync,
       onSetCustomerId: this.onSetCustomerId,
