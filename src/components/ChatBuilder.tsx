@@ -362,10 +362,8 @@ class ChatBuilder extends React.Component<Props, State> {
 
     if (isAgentMessage(message)) {
       onMessageReceived && onMessageReceived(message);
-    } else if (isCustomerMessage(message)) {
-      onMessageSent && onMessageSent(message);
     } else {
-      this.logger.error('Unexpected message:', message);
+      onMessageSent && onMessageSent(message);
     }
   };
 
