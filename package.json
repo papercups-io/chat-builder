@@ -1,6 +1,6 @@
 {
   "name": "@papercups-io/chat-builder",
-  "version": "0.0.6",
+  "version": "0.0.7-beta.0",
   "description": "Papercups chat builder",
   "author": "reichert621",
   "license": "MIT",
@@ -73,6 +73,7 @@
   "dependencies": {
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@papercups-io/browser": "0.0.1",
     "axios": "^0.21.1",
     "phoenix": "^1.5.3"
   }

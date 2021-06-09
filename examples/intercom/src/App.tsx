@@ -57,6 +57,29 @@ const App = () => {
 
           return <ChatToggle isOpen={isOpen} onToggleOpen={onToggleOpen} />;
         }}
+        notifications={({unread = []}) => {
+          return (
+            <div>
+              {unread.map((message) => {
+                return (
+                  <div
+                    key={message.id}
+                    style={{
+                      padding: 16,
+                      margin: 8,
+                      border: '1px solid rgb(245, 245, 245)',
+                      borderRadius: 4,
+                      boxShadow: 'rgba(35, 47, 53, 0.09) 0px 2px 8px 0px',
+                      maxWidth: '84%',
+                    }}
+                  >
+                    {message.body}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }}
       />
     </div>
   );
