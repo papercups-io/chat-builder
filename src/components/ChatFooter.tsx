@@ -1,8 +1,9 @@
 import React from 'react';
 import {FooterProps} from './ChatBuilder';
 
-const ChatFooter = ({onSendMessage}: FooterProps) => {
+const ChatFooter = ({config, onSendMessage}: FooterProps) => {
   const [body, setMessageBody] = React.useState('');
+  const {newMessagePlaceholder = 'Start typing...'} = config;
 
   const handleChange = (e: any) => setMessageBody(e.target.value);
 
@@ -31,7 +32,7 @@ const ChatFooter = ({onSendMessage}: FooterProps) => {
             fontSize: '1em',
           }}
           value={body}
-          placeholder='Start typing...'
+          placeholder={newMessagePlaceholder}
           onChange={handleChange}
         />
       </form>
