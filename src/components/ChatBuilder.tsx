@@ -135,6 +135,7 @@ type Props = {
   config: Config;
   debug?: boolean;
   isOpenByDefault?: boolean;
+  scrollIntoViewOptions?: boolean | ScrollIntoViewOptions;
   styles?: {
     header?: Record<string, any>;
     body?: Record<string, any>;
@@ -424,7 +425,9 @@ class ChatBuilder extends React.Component<Props, State> {
   };
 
   scrollIntoView = () => {
-    this.scrollToEl && this.scrollToEl.scrollIntoView(false);
+    const {scrollIntoViewOptions = false} = this.props;
+
+    this.scrollToEl && this.scrollToEl.scrollIntoView(scrollIntoViewOptions);
   };
 
   handleUnseenMessages = (payload: any) => {
