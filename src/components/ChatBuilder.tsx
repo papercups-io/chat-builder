@@ -149,7 +149,7 @@ type Props = {
   toggle?: (options: ToggleButtonProps) => React.ReactElement;
   notifications?: (options: NotificationsProps) => React.ReactElement;
   // callbacks
-  onChatLoaded?: () => void;
+  onChatLoaded?: (papercups: Papercups) => void;
   onChatOpened?: () => void;
   onChatClosed?: () => void;
   onMessageSent?: (message: Message) => void;
@@ -353,7 +353,7 @@ class ChatBuilder extends React.Component<Props, State> {
     const {onChatLoaded = noop} = this.props;
 
     if (onChatLoaded && typeof onChatLoaded === 'function') {
-      onChatLoaded();
+      onChatLoaded(this.papercups);
     }
   };
 
